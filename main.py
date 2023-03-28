@@ -8,6 +8,7 @@ pygame.init()
 # Set name and variables
 pygame.display.set_caption("Turbo Titans")
 SPEED = 5
+BACKGROUND_SPEED = 5
 SCORE = 0
 
 # Set screen info
@@ -34,15 +35,15 @@ class Hugh(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("Enemy.png")
         self.rect = self.image.get_rect()
-        self.rect.center = (random.randint(211, SCREEN_WIDTH - 211), 0)
+        self.rect.center = (random.randint(250, SCREEN_WIDTH - 250), 0)
 
     def move(self):
         global SCORE
-        self.rect.move_ip(0, SPEED)
+        self.rect.move_ip(0, SPEED + 0.5)
         if (self.rect.bottom > 750):
             SCORE += 1
             self.rect.top = -50
-            self.rect.center = (random.randint(70, 650), 0)
+            self.rect.center = (random.randint(250, SCREEN_WIDTH - 250), 0)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
@@ -54,16 +55,16 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load("Car.png")
         self.image = pygame.transform.scale(self.image, (100, 200))
         self.rect = self.image.get_rect()
-        self.rect.center = (450, 500)
+        self.rect.center = (450, 540)
 
     def move(self):
         pressed_keys = pygame.key.get_pressed()
-        if self.rect.left > 0:
+        if self.rect.left > 250:
             if pressed_keys[K_LEFT]:
-                self.rect.move_ip(-20, 0)
-        if self.rect.right < SCREEN_WIDTH:
+                self.rect.move_ip(-25, 0)
+        if self.rect.right < SCREEN_WIDTH - 250:
             if pressed_keys[K_RIGHT]:
-                self.rect.move_ip(20, 0)
+                self.rect.move_ip(25, 0)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
@@ -77,18 +78,18 @@ class Background():
         self.bgY1 = 0
         self.bgX1 = 0
 
-        self.bgY2 = -self.rectBGimg.height
+        self.bgY2 = self.rectBGimg.height
         self.bgX2 = 0
 
-        self.movingDownSpeed = 5
+        self.movingDownSpeed = BACKGROUND_SPEED + 1
 
     def update(self):
         self.bgY1 += self.movingDownSpeed
         self.bgY2 += self.movingDownSpeed
         if self.bgY1 >= self.rectBGimg.height:
-            self.bgY1 = self.rectBGimg.height
+            self.bgY1 = -self.rectBGimg.height
         if self.bgY2 >= self.rectBGimg.height:
-            self.bgY2 = self.rectBGimg.height
+            self.bgY2 = -self.rectBGimg.height
 
     def render(self):
         SCREEN.blit(self.bgimage, (self.bgX1, self.bgY1))
@@ -139,7 +140,7 @@ while True:
         pygame.display.update()
         for entity in all_sprites:
             entity.kill()
-        time.sleep(2)
+        time.sleep(0.5)
         pygame.quit()
 
     pygame.display.update()
